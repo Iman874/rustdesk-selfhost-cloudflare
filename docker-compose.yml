@@ -1,0 +1,31 @@
+﻿# VPS Linux RECOMMENDED - network_mode: host (sesuai docs resmi)
+# Docs: https://rustdesk.com/docs/en/self-host/rustdesk-server-oss/docker/
+# Ports wajib: 21115/tcp, 21116/tcp+udp, 21117/tcp. Opsional: 21118/21119 untuk web client
+# Catatan: network_mode: host hanya jalan di Linux. Di Windows pakai docker-compose.ports.yml
+
+services:
+  hbbs:
+    container_name: hbbs
+    image: rustdesk/rustdesk-server:latest
+    # pin versi biar reproducible, contoh: rustdesk/rustdesk-server:1.1.16
+    command: hbbs
+    volumes:
+      - ./data:/root
+    network_mode: "host"
+    depends_on:
+      - hbbr
+    restart: unless-stopped
+    # environment:
+    #   - ALWAYS_USE_RELAY=Y  # paksa semua sesi lewat hbbr (boros bandwidth, jangan aktifkan kecuali butuh)
+    #   - RUST_LOG=info
+
+  hbbr:
+    container_name: hbbr
+    image: rustdesk/rustdesk-server:latest
+    # -k _ = wajib pakai Key yang sama dengan hbbs, cegah orang lain numpang relay gratis
+    # tanpa ini, siapa pun yang tau IP:21117 bisa pakai bandwidth kamu
+    command: hbbr -k _
+    volumes:
+      - ./data:/root
+    network_mode: "host"
+    restart: unless-stopped

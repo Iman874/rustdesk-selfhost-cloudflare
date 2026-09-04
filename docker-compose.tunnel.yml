@@ -1,0 +1,16 @@
+﻿# Opsional: jalankan cloudflared sebagai container (VPS Linux)
+# Usage: docker compose -f docker-compose.yml -f docker-compose.tunnel.yml up -d
+# Prasyarat: sudah `cloudflared tunnel create` dan taruh credentials json di config/cloudflared/
+
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    command: tunnel --no-autoupdate run
+    volumes:
+      - ./config/cloudflared:/etc/cloudflared
+    network_mode: "host"
+    restart: unless-stopped
+    depends_on:
+      - hbbs
+      - hbbr

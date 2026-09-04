@@ -1,0 +1,28 @@
+﻿# Cloudflare Tunnel config - HANYA untuk Web Client (21118/21119)
+# Native RustDesk (21115-21117 TCP/UDP) TIDAK bisa lewat tunnel HTTP gratis.
+# Jika butuh native via tunnel, harus pakai `cloudflared access tcp` di TIAP client (tidak praktis).
+# Untuk native, expose 21115-21117 langsung via firewall/port-forward.
+
+tunnel: rustdesk-tunnel
+credentials-file: /root/.cloudflared/REPLACE_WITH_TUNNEL_ID.json
+
+ingress:
+  # Web client ID server - https://rustdesk.example.com -> hbbs:21118
+  # RustDesk Web Client akan konek wss://rustdesk.example.com/ws/id
+  - hostname: rustdesk.example.com
+    service: http://localhost:21118
+    originRequest:
+      noTLSVerify: true
+
+  # Web client Relay - https://relay.rustdesk.example.com -> hbbr:21119
+  # wss://relay.rustdesk.example.com/ws/relay
+  - hostname: relay.rustdesk.example.com
+    service: http://localhost:21119
+    originRequest:
+      noTLSVerify: true
+
+  # Catch-all 404
+  - service: http_status:404
+
+# Jalankan di VPS: cloudflared tunnel run rustdesk-tunnel
+# Atau docker service cloudflared (lihat docker-compose.tunnel.yml jika ada)

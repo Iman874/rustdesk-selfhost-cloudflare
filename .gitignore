@@ -1,0 +1,16 @@
+﻿# RustDesk keys & DB - jangan commit private key!
+data/
+db/
+!data/.gitkeep
+!db/.gitkeep
+.env
+*.log
+
+# Cloudflare credentials
+config/cloudflared/*.json
+*.pem
+*.key
+
+# OS
+.DS_Store
+Thumbs.db
