@@ -1,8 +1,10 @@
 #!/bin/bash
 # deploy_remote_server.sh - One-click deploy RustDesk Server OSS (hbbs/hbbr) di VPS Linux Ubuntu/Debian
+# Pola Monoframe backend: /var/www/monobox/backend (VPS 203.194.115.85 Ubuntu 24.04)
 # Usage: chmod +x deploy_remote_server.sh && sudo ./deploy_remote_server.sh [relay-host]
-#   relay-host: domain/IP VPS (default: auto-detect public IP)
+#   relay-host: domain/IP VPS (default: auto-detect public IP, contoh 203.194.115.85)
 #   --with-tunnel: juga setup Cloudflare Tunnel untuk 21118/21119 (butuh cloudflared login manual)
+# Lihat how_to_deploy.md untuk GOTCHA & verifikasi (wajib baca sebelum deploy)
 
 set -e
 RELAY_HOST="${1:-}"
