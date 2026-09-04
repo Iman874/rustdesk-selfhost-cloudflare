@@ -1,6 +1,8 @@
-﻿# RustDesk Self-Host + Cloudflare Tunnel
+﻿# RustDesk Self-Host
 
-Self-host RustDesk Server OSS (hbbs + hbbr) dengan opsi Cloudflare Tunnel untuk Web Client. Repo ini siap push ke GitHub dan deploy di VPS Linux (recommended) atau test lokal Windows.
+Self-host RustDesk Server OSS (hbbs + hbbr). **VPS = direct tanpa Cloudflare**. Cloudflare Tunnel **hanya opsi** untuk server rumah tanpa IP publik (client butuh `client.bat`).
+
+> Lihat `how_to_run_client.md` untuk cara client. VPS langsung pakai Mode A (tanpa tunnel).
 
 > Client kamu: `rustdesk-1.4.9-x86_64.exe` (kompatibel dengan server OSS 1.1.16/latest).
 
@@ -14,11 +16,14 @@ Self-host RustDesk Server OSS (hbbs + hbbr) dengan opsi Cloudflare Tunnel untuk 
 
 ```
 .
-├── deploy_remote_server.sh         # ONE-CLICK VPS deploy (chmod +x && sudo ./deploy_remote_server.sh)
+├── deploy_remote_server.sh         # ONE-CLICK VPS deploy (tanpa Cloudflare)
 ├── docker-compose.yml              # VPS Linux host mode (REKOMENDASI)
 ├── docker-compose.ports.yml        # Windows / tanpa host mode
 ├── docker-compose.s6.yml           # Single container s6
-├── config/cloudflared/config.yml   # Tunnel hanya untuk 21118/21119
+├── how_to_run_client.md            # Panduan client: Mode A VPS vs Mode B Tunnel
+├── client.bat                      # Auto-install cloudflared + buka TCP tunnel (hanya untuk Mode B)
+├── config/cloudflared/config.yml   # Tunnel web 21118/21119 (opsional)
+├── config/cloudflared/config.tcp.yml # Tunnel TCP 21115-21117 (hanya server rumah)
 ├── data/                           # volume hbbs/hbbr (jangan commit key!)
 ├── scripts/get-key.ps1             # ambil public key (Windows)
 └── scripts/get-key.sh              # ambil public key (Linux)
@@ -68,9 +73,16 @@ docker compose -f docker-compose.ports.yml logs hbbs
 
 > Jika `hbbr` pakai `-k _` (sudah di compose), hanya client dengan Key yang bisa relay — cegah pemakaian liar [ssdnodes.com].
 
-## Cloudflare Tunnel (opsional, untuk Web Client)
+## Client
 
-Hanya jika mau akses via browser `https://rustdesk.example.com`:
+Lihat **`how_to_run_client.md:1`** — Mode A (VPS direct, tanpa Cloudflare) vs Mode B (`client.bat:1` auto tunnel TCP).
+
+## Cloudflare Tunnel (opsional, hanya jika perlu)
+
+- **VPS dengan IP publik:** TIDAK BUTUH Cloudflare.
+- **Server rumah tanpa IP publik:** pakai `config/cloudflared/config.tcp.yml:1` + `client.bat:1`.
+
+Web client via browser `https://rustdesk.example.com`:
 
 ```bash
 # di VPS

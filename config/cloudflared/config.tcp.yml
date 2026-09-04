@@ -1,0 +1,21 @@
+# config.tcp.yml - Server rumah tanpa IP publik (Mode B) - TCP via Cloudflare Tunnel
+# VPS dengan IP publik TIDAK butuh file ini, cukup docker-compose.yml saja.
+# Usage di server rumah:
+#   cloudflared tunnel login
+#   cloudflared tunnel create rustdesk-tcp
+#   cloudflared tunnel route dns rustdesk-tcp id.rustdesk.example.com
+#   cloudflared tunnel route dns rustdesk-tcp relay.rustdesk.example.com
+#   cloudflared tunnel route dns rustdesk-tcp nattest.rustdesk.example.com
+#   cloudflared tunnel run --config ./config/cloudflared/config.tcp.yml rustdesk-tcp
+
+tunnel: rustdesk-tcp
+credentials-file: /root/.cloudflared/REPLACE_WITH_TUNNEL_ID.json
+
+ingress:
+  - hostname: id.rustdesk.example.com
+    service: tcp://localhost:21116
+  - hostname: relay.rustdesk.example.com
+    service: tcp://localhost:21117
+  - hostname: nattest.rustdesk.example.com
+    service: tcp://localhost:21115
+  - service: http_status:404
