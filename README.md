@@ -14,6 +14,7 @@ Self-host RustDesk Server OSS (hbbs + hbbr) dengan opsi Cloudflare Tunnel untuk 
 
 ```
 .
+├── deploy_remote_server.sh         # ONE-CLICK VPS deploy (chmod +x && sudo ./deploy_remote_server.sh)
 ├── docker-compose.yml              # VPS Linux host mode (REKOMENDASI)
 ├── docker-compose.ports.yml        # Windows / tanpa host mode
 ├── docker-compose.s6.yml           # Single container s6
@@ -23,30 +24,26 @@ Self-host RustDesk Server OSS (hbbs + hbbr) dengan opsi Cloudflare Tunnel untuk 
 └── scripts/get-key.sh              # ambil public key (Linux)
 ```
 
-## Quick Start - VPS Linux (Ubuntu/Debian)
+## Quick Start - VPS Linux (Ubuntu/Debian) - ONE CLICK
 
 ```bash
 git clone https://github.com/<user>/rustdesk-selfhost-cloudflare.git
 cd rustdesk-selfhost-cloudflare
+chmod +x deploy_remote_server.sh
+sudo ./deploy_remote_server.sh              # auto-detect IP
+# atau: sudo ./deploy_remote_server.sh rustdesk.example.com
+# atau: sudo ./deploy_remote_server.sh --with-tunnel rustdesk.example.com
 
-# 1. Jalankan server
+# script akan: install docker, setup ufw, pull & up hbbs/hbbr, print Key
+cat ./data/id_ed25519.pub
+```
+
+Manual (tanpa script):
+```bash
 docker compose up -d
 docker compose logs -f hbbs  # tunggu `Key: xxxx` muncul
-docker compose logs -f hbbr
-
-# 2. Ambil Key
 cat ./data/id_ed25519.pub
-# atau: bash scripts/get-key.sh
-
-# 3. Buka firewall (contoh UFW)
-sudo ufw allow 21115/tcp
-sudo ufw allow 21116/tcp
-sudo ufw allow 21116/udp
-sudo ufw allow 21117/tcp
-# opsional web: 21118,21119 hanya jika tidak pakai tunnel
-sudo ufw enable
-
-# 4. Cek listen
+sudo ufw allow 21115/tcp; sudo ufw allow 21116/tcp; sudo ufw allow 21116/udp; sudo ufw allow 21117/tcp; sudo ufw enable
 ss -tulpn | grep 2111  # harus ada 21115,21116 tcp + 21116 udp + 21117
 ```
 
